@@ -1,0 +1,189 @@
+---
+title: "R simplemarkov"
+output: html_notebook
+---
+
+```{r packages}
+#install.packages("markovchain")
+library(markovchain)
+library(diagram)
+```
+
+based on : https://dataconomy.com/2018/03/an-introduction-to-markov-chains-using-r/
+
+also: https://cran.r-project.org/web/packages/heemod/vignettes/c_homogeneous.html
+and https://cran.r-project.org/web/packages/markovchain/vignettes/an_introduction_to_markovchain_package.pdf
+
+I've taken code from dataconomy and just plugged in the Scott Pgae examples - also added some explanatory text here:
+
+
+According to Paul Gagniuc’s Markov Chains: From Theory to Implementation and Experimentation,
+-“A Markov process is a stochastic process that satisfies the Markov property.”  
+-“The term Markov property refers to the memoryless property of a stochastic process.”  
+-“A stochastic process has the Markov property if the conditional probability distribution of future states of the process depends only upon the present state, not on the sequence of events that preceded it.”  
+  
+  
+ A Markov Chain is defined by three properties:  
+  -A state space: a set of values or states in which a process could exist  
+  -A transition operator: defines the probability of moving from one state to another state  
+  -A current state probability distribution: defines the probability of being in any one of the states at the start of the process  
+  
+  The most simple Markov models in health economic evaluation are models where transition probabilities between states do not change with time. Those are called homogeneous or time-homogeneous Markov models.  
+  
+```{r tryModelThinkingegs}
+
+states <- c("Alert","Bored")
+ZoneTransition <- matrix(c(.8,.2,
+                           .25,.75),nrow=length(states),byrow=T,
+               dimnames = list(states,states))
+ZoneTransition
+
+#create a markov chain object
+McZone <- new("markovchain",states=states,byrow=T,transitionMatrix=ZoneTransition,name="students")
+McZone
+
+#we need to include the initial state. We can specify this in a simple vector
+
+initial <- c(.90,.10)
+#we can then see how things change after 1,2,3,4,10 iterations
+initial*McZone
+initial*McZone^2
+initial*McZone^3
+initial*McZone^4
+initial*McZone^10
+
+#let's try with initial of .1 and .9
+initial <- c(.10,.90)
+initial*McZone
+initial*McZone^2
+initial*McZone^3
+initial*McZone^4
+initial*McZone^10
+
+
+plotmat(ZoneTransition,pos=c(1,1),lwd=1,box.lwd=1,cex.txt=.5,box.size=.1,
+        box.type="circle",box.prop=.5,box.col="light yellow",arr.length=.1,
+        arr.width=.1,self.cex=.4,self.shifty=-.01,self.shiftx=.13,
+        main="Transition Diagram")
+
+```
+```{r democracyeg}
+
+states <- c("Free","PartFree","NotFree")
+ZoneTransition <- matrix(c(.95,.05,0,
+                           .1,.8,.1,
+                           .05,.15,.8),nrow=length(states),byrow=T,
+               dimnames = list(states,states))
+ZoneTransition
+
+#create a markov chain object
+McZone <- new("markovchain",states=states,byrow=T,transitionMatrix=ZoneTransition,name="students")
+McZone
+
+#we need to include the initial state. We can specify this in a simple vector
+
+initial <- c(.7,.3,0)
+#we can then see how things change after 1,2,3,4,10 iterations
+initial*McZone
+initial*McZone^2
+initial*McZone^3
+initial*McZone^4
+initial*McZone^10
+
+
+
+
+plotmat(ZoneTransition,pos=c(1,2),lwd=1,box.lwd=1,cex.txt=.5,box.size=.1,
+        box.type="circle",box.prop=.5,box.col="light yellow",arr.length=.1,
+        arr.width=.1,self.cex=.4,self.shifty=-.01,self.shiftx=.13,
+        main="Transition Diagram")
+
+```
+
+Let’s try to map the movement of Uber drivers in the Indian capital city of New Delhi. We can divide the city into three zones – North Delhi, South Delhi and West Delhi. The movement of drivers from one zone to another zone will depend only on their current zone. We’ve determined the following probabilities for the movement of a driver:
+  
+- Of all the drivers in North Zone, 30% will remain in North Zone, 30% will move to South zone, while the remaining 40% will go to West Zone  
+- In the South Zone, drivers have a 40% chance of moving to North Zone, 40% chance of staying in the South Zone;  20% drivers will move to West Zone  
+- Of all the drivers in West Zone, 50% and 30% will move to North Zone and South Zone, respectively; 20% will remain in West Zone  
+  
+Once a driver is in a particular zone, he can either move to the next zone or stay back in the same zone. His movement will be decided only by his current state and not the sequence of past states. The state space in this example includes North Zone, South Zone and West Zone. It follows all the properties of Markov Chains because the current state has the power to predict the next stage.
+
+```{r setup}
+#install.packages("markovchain")
+library(markovchain)
+library(diagram)
+
+DriverZone <- c("North","South", "West")
+ZoneTransition <- matrix(c(.3,.3,.4,
+                           .4,.4,.2,
+                           .5,.3,.2),nrow=3,byrow=T,
+               dimnames = list(DriverZone,DriverZone))
+ZoneTransition
+
+#create a markov chain object
+McZone <- new("markovchain",states=DriverZone,byrow=T,transitionMatrix=ZoneTransition,name="DriverMovement")
+McZone
+
+#plot transition matrix in a diagram
+plotmat(ZoneTransition,pos=c(1,2),lwd=1,box.lwd=1,cex.txt=.5,box.size=.1,
+        box.type="circle",box.prop=.5,box.col="light yellow",arr.length=.1,
+        arr.width=.1,self.cex=.4,self.shifty=-.01,self.shiftx=.13,
+        main="Transition Diagram")
+```
+
+Markov Chain can be used to answer some of the future state questions. Assuming that a driver is currently in the North Zone, what is the probability that the driver will again be in the North Zone after two trips?
+
+A driver can reach the North Zone again in his second trip in three different ways:
+
+1.North Zone → North Zone
+
+Probability: P(a) = 0.3*0.3 = 0.09
+
+2. South Zone → North Zone
+
+P(b) = 0.4*0.3 = 0.12
+
+3. West Zone → North Zone
+
+P(c) = 0.5*0.4 = 0.20
+
+Probability (North Zone in second trip) = P(a) + P(b) + P(c) = 0.09 + 0.12 + 0.20 = 0.41
+
+```{r solve2trips}
+
+McZone^2
+```
+
+This gives us the direct probability of a driver coming back to the North Zone after two trips.
+
+We can similarly calculate for subsequent trips. Let’s calculate the probability of coming back to the North Zone in the third trip.
+
+```{r trip3}
+
+McZone^3
+```
+
+This calculation can be done for any number of trips; however, as we try to increase n (when n is sufficiently large), the predictive power tends to go down and there comes a stage where:
+
+P(X(t+1)/X(t)) = P(X(t)/X(t-1))
+
+The Markov Chain reaches an equilibrium called a stationary state. In this case, the starting point becomes completely irrelevant. The stationary state can be calculated using some linear algebra methods; however, we have a direct function, ‘steadyStates’, in R, which makes our lives easier.
+
+```{r steady}
+steadyStates(McZone)
+
+```
+
+In the stationary state, a driver has a probability of 0.39 of ending up in the North Zone and a probability of 0.33 of reaching the South Zone.
+
+Let’s say a driver has to complete 25 trips in a day. Will 25 trips take our Markov Chain to the stationary state?
+
+```{r trips25}
+McZone^25
+```
+
+# Markov Chains in everyday life 
+
+The above two examples are real-life applications of Markov Chains. There are plenty of other applications of Markov Chains that we use in our daily life without even realizing it. Google’s famous PageRank algorithm is one of the most famous use cases of Markov Chains. Google has indexed all websites and created a transition matrix, similar to the one we have created, but at a very large scale. Any user on the site represents one stage, and the transition matrix represents the user’s probability of moving to other sites from the current site.  
+
+Typing word prediction, information theory, queuing theory and Monte Carlo simulation are other very useful applications of Markov Chains. Markov has been used in areas of marketing, as well, with e-commerce companies are utilizing its power to define the different stages of a customer lifetime or predict customer churn probability. 

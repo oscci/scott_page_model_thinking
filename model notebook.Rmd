@@ -1,0 +1,144 @@
+---
+title: "Model thinking"
+output: html_notebook
+---
+
+# Aggregation  
+
+Philip Anderson: More is Different.
+Can't do reductionist science: the whole not explicable in terms of the parts.  
+Example of water molecule. Sensation of wetness - we can put our hand in water and it feels slippery. Not a property of a single molecule. Due to the weakness of hydrogen bonds - the bonds in our hands are stronger and so we can push through water. Wetness a property of a bunch of molecules, not a single molecule.  
+
+Cognition, consciousness, etc  - EMERGENT properties of the system.  
+Macro level has properties different from micro level.  
+
+Aggregation. Actions.
+Actions add up. 
+Can get complex patterns from simple rules. 
+
+# Central limit theorem 
+
+Group of people independently making a decision.  
+What is N people.  Probability distribution.  
+
+Central limit theorem: add up lots of independent events.
+Get bell-shaped curve.  
+Uses coin flip to illustrate.  
+
+Binomial distribution.
+if p = .5
+mean is N/2
+SD is sqrt(N)/2
+
+if p is other value  SD = sqrt(p*(1-p)*N)
+
+Example of plane with 380 seats. 
+People show up 90% of time.  
+Sell 400 tickets. 
+Mean is .9*400 = 360
+
+```{r sdcompute}
+n=400
+p=.9
+mean = n*p
+sd = sqrt(p*(1-p)*n)
+mean
+sd
+```
+
+Shows that you'd usually get away with selling 400 seats.
+
+Things that are not normally distributed.
+Eg stock returns - here the actions are not independent - people affected by each other - then you can get other distributions.  
+
+# Six sigma  
+
+Business of Motorola - production processes to avoid quality errors. 
+How often 6 SD - 3.4 in a million outside that range.  
+
+Average banana sales - average 500 lbs per day.  
+SD = 10.
+Day within 6 sigma, won't run out of bananas.
+If I have 560 lb of bananas, will be OK - won't run out.  
+
+Now think of metal thickness; need 500-560 mm
+Mean is 530.
+So need to have 30 as 6 sigma; 
+sigma = 5. 
+
+IN production process, drive sigma down to that value.  
+
+# Game of life  
+John Conway developed this.  
+Go board - black and white stones on board.
+Each cell has 8 neighbours. Cells alive or dead. On is dark, off is light.
+If you are currently off can only come on if exactly 3 neighbours on.
+If on, stay on if 2 or 3 neighbours on.  
+
+Over time, you can create patterns - e.g. blinkers.
+
+Different classes of pattern - may be random, may be organised.
+
+self organization: patterns appear without a designer.  
+
+# Cellular automata
+
+John von Neumann
+Game theory and growth theory  
+Simplest model of computation - Wolfram : new kind of science - explores how cellular automata works - computational inductive way of looking at the world.  
+
+Instead of 2D grid, a one=D line.
+Each cell has 2 neighbours. 
+Can study every rule and ask how it works. 
+Can get fixed results, alternation, randomness or complexity.  
+
+Wheeler 1990: everything explicable in terms of Y/N questions - every comes from binary switches. 
+
+Follows from fact that cellular automata can produce almost anything 
+
+Langton lambda  
+percent of N switches that are on.  
+
+If lots of interdependence, get complexity.  
+
+# Preference aggregation
+
+can ask people which things preferred.
+Prefernce orderings - ranking of many alternatives.  
+Within category. 
+
+suppose 3 things; apples/bananas/coconuts
+8 different preference rankings 
+
+but assume transitive preferences
+restricts how many preferences - 6 ways to have rational (transitive) preferences.
+
+Addng up preferences: can you say anything about preferences for a group.
+Aggregation problem. 
+Could vote.
+
+What about pairwise vote on 3 things.
+This a paradox - can end up with nontransitive
+Each part is rational but the aggregate is not rational.
+Condorcet paradox.  
+
+Voting - creates problems. May see strategic voting. 
+
+DB: But isn't the paradox just a consequence of how averaged; could just take average and say overall thing is no preference
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
